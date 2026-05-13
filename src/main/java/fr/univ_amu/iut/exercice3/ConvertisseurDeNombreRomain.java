@@ -34,19 +34,70 @@ public class ConvertisseurDeNombreRomain {
    * @throws IllegalArgumentException si la chaîne contient un symbole invalide ou une soustraction
    *     interdite
    */
+  public int valeurDe(char car) {
+
+    switch (car) {
+      case 'I':
+        return 1;
+
+      case 'V':
+        return 5;
+
+      case 'X':
+        return 10;
+
+      case 'L':
+        return 50;
+
+      case 'C':
+        return 100;
+
+      case 'D':
+        return 500;
+
+      case 'M':
+        return 1000;
+
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
+
+  private boolean isSubstraction(char current, char pred) {
+
+    return valeurDe(pred) < valeurDe(current);
+  }
+
+  private boolean isValidSubstraction(char current, char pred) {
+    return current == 'V' && pred == 'I'
+        || current == 'X' && pred == 'I'
+        || current == 'L' && pred == 'X'
+        || current == 'C' && pred == 'X'
+        || current == 'D' && pred == 'C'
+        || current == 'M' && pred == 'C';
+  }
+
   public int enNombreArabe(String chiffreRomain) {
-    int total = 0;
-    // TODO exercice 3 : remplir total en parcourant la chaîne.
-    //
-    // Activez les tests un par un. Commencez par "I" = 1 (fake it en
-    // retournant 1 en dur), puis "II" = 2 et "III" = 3 (boucle de comptage
-    // d'occurrences de I), puis "V" = 5 (switch sur le symbole).
-    //
-    // Quand vous arrivez à "IV" = 4 : extrayez une méthode valeurDe(char)
-    // pour factoriser, puis ajoutez la logique de soustraction.
-    //
-    // Pour les exceptions : une soustraction est valide seulement pour
-    // I avant V/X, X avant L/C, C avant D/M. Tout le reste est invalide.
+
+    int total = valeurDe(chiffreRomain.charAt(0));
+
+    for (int i = 1; i < chiffreRomain.length(); i++) {
+
+      char current = chiffreRomain.charAt(i);
+      char pred = chiffreRomain.charAt(i - 1);
+
+      if (isSubstraction(current, pred)) {
+
+        if (isValidSubstraction(current, pred)) {
+
+          total -= 2 * valeurDe(pred);
+
+        } else throw new IllegalArgumentException();
+      }
+
+      total += valeurDe(current);
+    }
+
     return total;
   }
 }
